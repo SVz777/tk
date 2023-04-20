@@ -1,8 +1,10 @@
 package json
 
 type Options struct {
-	ReflectSwitch bool
-	Tag           string
+	ReflectSwitch          bool
+	Tag                    string
+	IgnoreSingleFieldError bool
+	Convert                bool
 }
 
 func (opts *Options) Update(opt ...Option) {
@@ -31,5 +33,17 @@ func WithReflectSwitch(reflectSwitch bool) Option {
 func WithTag(tag string) Option {
 	return func(opts *Options) {
 		opts.Tag = tag
+	}
+}
+
+func WithIgnoreSingleFieldError(flag bool) Option {
+	return func(opts *Options) {
+		opts.IgnoreSingleFieldError = flag
+	}
+}
+
+func WithConvert(flag bool) Option {
+	return func(opts *Options) {
+		opts.Convert = flag
 	}
 }

@@ -180,6 +180,7 @@ func TestNewJSONPath(t *testing.T) {
         "bool": false
     }
 }`),
+		WithConvert(true),
 	)
 
 	assert.NotEqual(t, nil, jp)

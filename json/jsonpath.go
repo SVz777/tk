@@ -338,6 +338,9 @@ func (j *Path) parseWithJSONPath(v reflect.Value) error {
 		}
 		value, err := j.parseValue(tf.Name, vf.Type(), jsonValue)
 		if err != nil {
+			if j.opts.IgnoreSingleFieldError {
+				continue
+			}
 			return fmt.Errorf("getvalue error: %w", err)
 		}
 
@@ -427,10 +430,13 @@ func (j *Path) parseValue(fieldName string, tf reflect.Type, jsonValue *Path) (r
 		}
 
 	default:
-		iv, err1 := convert.Convert(jsonValue.Interface(), tf.Kind())
-		if err1 != nil {
-			return reflect.Value{}, fmt.Errorf("%s parse default err: %w", fieldName, err1)
+		if j.opts.Convert {
+			iv, err1 := convert.Convert(jsonValue.Interface(), tf.Kind())
+			if err1 != nil {
+				return reflect.Value{}, fmt.Errorf("%s parse default err: %w", fieldName, err1)
+			}
+			return reflect.ValueOf(iv), nil
 		}
-		return reflect.ValueOf(iv), nil
+		return reflect.ValueOf(jsonValue.Interface()), nil
 	}
 }
