@@ -345,7 +345,7 @@ func (j *Path) parseWithJSONPath(v reflect.Value) error {
 		}
 
 		if !value.Type().AssignableTo(vf.Type()) {
-			return fmt.Errorf("%s can't %s:%v set error: %w", tf.Name, value.String(), value, err)
+			return fmt.Errorf("%s can't %s:%v set", tf.Name, value.String(), value)
 		}
 		vf.Set(value)
 	}
