@@ -311,17 +311,17 @@ func (j *Path) ParseWithJSONPath(data interface{}) error {
 
 func (j *Path) parseWithJSONPath(v reflect.Value) error {
 	if v.Kind() == reflect.Ptr {
+		if v.IsNil() {
+			return nil
+		}
 		v = v.Elem()
 	}
 	fn := v.NumField()
 	for ii := 0; ii < fn; ii++ {
 		vf := v.Field(ii)
 		tf := v.Type().Field(ii)
-		if !vf.CanSet() {
-			return fmt.Errorf("%s can't set", tf.Name)
-		}
-		busSrc := tf.Tag.Get(j.opts.Tag)
-		if busSrc == "" {
+		tagSrc := tf.Tag.Get(j.opts.Tag)
+		if tagSrc == "" {
 			if tf.Type.Kind() == reflect.Struct ||
 				(vf.Kind() == reflect.Ptr && vf.Type().Elem().Kind() == reflect.Struct) {
 				err := j.parseWithJSONPath(vf)
@@ -331,8 +331,12 @@ func (j *Path) parseWithJSONPath(v reflect.Value) error {
 			}
 			continue
 		}
-		busPath := strings.Split(busSrc, ".")
-		jsonValue := j.GetPath(busPath...)
+		if !vf.CanSet() {
+			return fmt.Errorf("%s can't set", tf.Name)
+		}
+		tagName := strings.Split(tagSrc, ",")[0]
+		tagPath := strings.Split(tagName, ".")
+		jsonValue := j.GetPath(tagPath...)
 		if jsonValue.IsNil() {
 			continue
 		}
