@@ -8,14 +8,16 @@ import (
 )
 
 const (
-	DefaultTime   = "1971-01-01 00:00:00"
-	LayoutTime    = "2006-01-02 15:04:05"
-	LayoutTimeYMD = "2006-01-02"
-	LayoutTimeYM  = "2006-01"
-	LayoutTimeYmd = "20060102"
-	LayoutTimeYm  = "200601"
-	LayoutTimeY   = "2006"
-	LayoutTimeHI  = "15:04"
+	DefaultTime     = "1971-01-01 00:00:00"
+	LayoutTime      = "2006-01-02 15:04:05"
+	LayoutTimeYMDHM = "2006-01-02 15:04"
+	LayoutTimeYMDH  = "2006-01-02 15"
+	LayoutTimeYMD   = "2006-01-02"
+	LayoutTimeYM    = "2006-01"
+	LayoutTimeYmd   = "20060102"
+	LayoutTimeYm    = "200601"
+	LayoutTimeY     = "2006"
+	LayoutTimeHI    = "15:04"
 
 	ChineseLayoutTime = "2006年1月2日 15:04:05"
 	ChineseLayoutMD   = "01月02日"
@@ -101,20 +103,27 @@ func TimestampToDatetime(timestamp int64, layout string) (datetime string, err e
 	return time.Format(layout), nil
 }
 
+var defaultParseTimeLayouts = []string{
+	LayoutTime,
+	LayoutTimeYMDH,
+	LayoutTimeYMDHM,
+	LayoutTimeYMD,
+	LayoutTimeYM,
+	LayoutTimeY,
+}
+
 // ParseTime 日期解析
-func ParseTime(dateTime string) (time.Time, error) {
-	if t, err := time.ParseInLocation(LayoutTime, dateTime, time.Local); err == nil {
-		return t, nil
+func ParseTime(dateTime string, layouts ...string) (time.Time, error) {
+	if len(layouts) == 0 {
+		layouts = defaultParseTimeLayouts
 	}
-	if t, err := time.ParseInLocation(LayoutTimeYMD, dateTime, time.Local); err == nil {
-		return t, nil
+
+	for idx := range layouts {
+		if t, err := time.ParseInLocation(layouts[idx], dateTime, time.Local); err == nil {
+			return t, nil
+		}
 	}
-	if t, err := time.ParseInLocation(LayoutTimeYM, dateTime, time.Local); err == nil {
-		return t, nil
-	}
-	if t, err := time.ParseInLocation(LayoutTimeY, dateTime, time.Local); err == nil {
-		return t, nil
-	}
+
 	return time.Now(), errors.New("parsing time error:" + dateTime)
 }
 
