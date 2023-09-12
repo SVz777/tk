@@ -347,7 +347,8 @@ func (j *Path) parseWithJSONPath(v reflect.Value) error {
 			}
 			return fmt.Errorf("getvalue error: %w", err)
 		}
-		if !value.Type().AssignableTo(vf.Type()) {
+
+		if value.Type().AssignableTo(vf.Type()) {
 			vf.Set(value)
 			continue
 		}
@@ -355,7 +356,7 @@ func (j *Path) parseWithJSONPath(v reflect.Value) error {
 		if value.Type().ConvertibleTo(vf.Type()) {
 			// 兼容类型别名 比如 type A int32 这种赋值
 			convertedValue := value.Convert(vf.Type()) // 类型转换
-			vf.Set(convertedValue)                     // 使用反射赋值
+			vf.Set(convertedValue)
 			continue
 		}
 

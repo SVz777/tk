@@ -7,7 +7,9 @@ import (
 )
 
 func TestNewJSONPath(t *testing.T) {
+	type AInt int
 	type JS struct {
+		AInt               AInt                     `json_path:"a_int"`
 		Int                int                      `json_path:"int"`
 		IntPtr             *int                     `json_path:"int"`
 		IntInterface       interface{}              `json_path:"int"`
@@ -68,6 +70,7 @@ func TestNewJSONPath(t *testing.T) {
 	jp, err := NewJSONPath(
 		[]byte(`
 {
+		"a_int":1,
     "int": 1,
     "uint": 1,
     "float": 1.11,
