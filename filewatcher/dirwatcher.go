@@ -18,7 +18,7 @@ type dirWatcher struct {
 	opts   *Options
 }
 
-func NewDirWatcher(dirpath string, callback CallFunc, opt ...Option) (*dirWatcher, error) {
+func NewDirWatcher(dirpath string, callback CallFunc, opt ...Option) (IWatcher, error) {
 	files, err := ioutil.ReadDir(dirpath)
 	if err != nil {
 		return nil, err
@@ -65,14 +65,14 @@ func (dw *dirWatcher) Path() string {
 }
 
 func (dw *dirWatcher) Watch() {
-	nowfiles, err := ioutil.ReadDir(dw.path)
+	nowFiles, err := ioutil.ReadDir(dw.path)
 	if err != nil {
 		log.Println("dw read path error:", err)
 		return
 	}
 	beforeFiles := collections.NewSet[string](collections.Keys(dw.files)...)
 	dw.RWMutex.Lock()
-	for _, file := range nowfiles {
+	for _, file := range nowFiles {
 		if file.IsDir() {
 			continue
 		}

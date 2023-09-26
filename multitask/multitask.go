@@ -6,13 +6,20 @@ import (
 	"sync"
 )
 
+type ITaskManager interface {
+	Add(key string, f Do)
+	GetAllTasks() map[string]ITask
+	GetTaskResult(key string) (result any)
+	GetTaskErr(key string) (err error)
+	Do() error
+}
 type taskManager struct {
 	ctx   context.Context
 	wg    sync.WaitGroup
 	tasks map[string]ITask
 }
 
-func NewTaskManager(ctx context.Context) *taskManager {
+func NewTaskManager(ctx context.Context) ITaskManager {
 	return &taskManager{
 		ctx:   ctx,
 		wg:    sync.WaitGroup{},

@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-func Convert(v interface{}, kind reflect.Kind) (interface{}, error) {
+func Convert(v any, kind reflect.Kind) (any, error) {
 	switch kind {
 	case reflect.Int:
 		return Int(v)
@@ -31,7 +31,7 @@ func Convert(v interface{}, kind reflect.Kind) (interface{}, error) {
 	}
 }
 
-func Int(v interface{}) (int, error) {
+func Int(v any) (int, error) {
 	if v == nil {
 		return 0, nil
 	}
@@ -85,7 +85,7 @@ func Int(v interface{}) (int, error) {
 	}
 }
 
-func Int32(v interface{}) (int32, error) {
+func Int32(v any) (int32, error) {
 	if v == nil {
 		return 0, nil
 	}
@@ -139,7 +139,7 @@ func Int32(v interface{}) (int32, error) {
 	}
 }
 
-func Int64(v interface{}) (int64, error) {
+func Int64(v any) (int64, error) {
 	if v == nil {
 		return 0, nil
 	}
@@ -195,7 +195,7 @@ func Int64(v interface{}) (int64, error) {
 	}
 }
 
-func Uint(v interface{}) (uint, error) {
+func Uint(v any) (uint, error) {
 	if v == nil {
 		return 0, nil
 	}
@@ -249,7 +249,7 @@ func Uint(v interface{}) (uint, error) {
 	}
 }
 
-func Uint64(v interface{}) (uint64, error) {
+func Uint64(v any) (uint64, error) {
 	if v == nil {
 		return 0, nil
 	}
@@ -305,7 +305,7 @@ func Uint64(v interface{}) (uint64, error) {
 	}
 }
 
-func String(v interface{}) (string, error) {
+func String(v any) (string, error) {
 	if v == nil {
 		return "", nil
 	}
@@ -343,7 +343,7 @@ func String(v interface{}) (string, error) {
 			return "true", nil
 		}
 		return "false", nil
-	case map[string]interface{}, []interface{}:
+	case map[string]any, []any:
 		if b, err := json.Marshal(t); err != nil {
 			return "", fmt.Errorf("map to string %w", err)
 		} else {
@@ -354,7 +354,7 @@ func String(v interface{}) (string, error) {
 	}
 }
 
-func Float64(v interface{}) (float64, error) {
+func Float64(v any) (float64, error) {
 	if v == nil {
 		return 0, nil
 	}
@@ -410,7 +410,7 @@ func Float64(v interface{}) (float64, error) {
 	}
 }
 
-func Bool(v interface{}) (bool, error) {
+func Bool(v any) (bool, error) {
 	if v == nil {
 		return false, nil
 	}

@@ -7,7 +7,7 @@ import (
 
 func TestGetValueWithFieldPath(t *testing.T) {
 	type args struct {
-		data interface{}
+		data any
 		path []string
 	}
 	type DataOneLayer struct {
@@ -18,18 +18,18 @@ func TestGetValueWithFieldPath(t *testing.T) {
 		A int
 	}
 	type Multi2 struct {
-		A interface{}
+		A any
 	}
 	type Multi3 struct {
-		A interface{}
+		A any
 	}
 	type DataMultiLayer struct {
-		A interface{}
+		A any
 	}
 	tests := []struct {
 		name    string
 		args    args
-		want    interface{}
+		want    any
 		wantErr bool
 	}{
 		{
@@ -217,28 +217,28 @@ func TestGetValueWithFieldPath(t *testing.T) {
 
 func TestSetValueWithFieldPath(t *testing.T) {
 	type args struct {
-		data  interface{}
-		value interface{}
+		data  any
+		value any
 		path  []string
 	}
 	type DataOneLayer struct {
-		A interface{}
+		A any
 		I int
 	}
 
 	type DataMultiLayer1 struct {
-		A interface{}
+		A any
 	}
 	type DataMultiLayer2 struct {
-		A interface{}
+		A any
 	}
 	type DataMultiLayer3 struct {
-		A interface{}
+		A any
 	}
 	tests := []struct {
 		name      string
 		args      args
-		wantValue interface{}
+		wantValue any
 		wantErr   bool
 	}{
 		{

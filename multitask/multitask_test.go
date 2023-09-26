@@ -14,30 +14,30 @@ import (
 func TestMultiTask(t *testing.T) {
 	type fields struct {
 		fs     map[string]multitask.Do
-		result interface{}
+		result any
 		err    error
 	}
 	tests := []struct {
 		name    string
 		fields  fields
-		wantRet interface{}
+		wantRet any
 	}{
 		{
 			name: "",
 			fields: fields{
 				fs: map[string]multitask.Do{
-					"k1": func(ctx context.Context) (interface{}, error) {
+					"k1": func(ctx context.Context) (any, error) {
 						return "k1", nil
 					},
-					"k2": func(ctx context.Context) (interface{}, error) {
+					"k2": func(ctx context.Context) (any, error) {
 						time.Sleep(1 * time.Second)
 						return "k2", fmt.Errorf("k2 err")
 					},
-					"k3": func(ctx context.Context) (interface{}, error) {
+					"k3": func(ctx context.Context) (any, error) {
 						time.Sleep(2 * time.Second)
 						return "k3", fmt.Errorf("k3 err")
 					},
-					"k4": func(ctx context.Context) (interface{}, error) {
+					"k4": func(ctx context.Context) (any, error) {
 						time.Sleep(3 * time.Second)
 						return "k4", fmt.Errorf("k4 err")
 					},

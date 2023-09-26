@@ -16,7 +16,7 @@ type fileWatcher struct {
 	opts    *Options
 }
 
-func NewFileWatcher(filepath string, callback CallFunc, opt ...Option) (*fileWatcher, error) {
+func NewFileWatcher(filepath string, callback CallFunc, opt ...Option) (IWatcher, error) {
 	info, err := os.Stat(filepath)
 	if err != nil {
 		return nil, err

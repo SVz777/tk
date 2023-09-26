@@ -14,7 +14,7 @@ func TestTaskPool(t *testing.T) {
 	tp.Serve()
 	tks := make([]multitask.ITask, 400)
 	for i := 0; i < 400; i++ {
-		tks[i] = multitask.NewTask(context.WithValue(context.Background(), "id", i), "test", func(ctx context.Context) (interface{}, error) {
+		tks[i] = multitask.NewTask(context.WithValue(context.Background(), "id", i), "test", func(ctx context.Context) (any, error) {
 			return ctx.Value("id"), nil
 		})
 		tp.Do(tks[i])

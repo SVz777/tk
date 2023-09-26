@@ -8,7 +8,7 @@ import (
 	"github.com/SVz777/tk/collections"
 )
 
-type Do func(context.Context) (interface{}, error)
+type Do func(context.Context) (any, error)
 
 type ITask interface {
 	// Do 执行task
@@ -18,9 +18,9 @@ type ITask interface {
 	// GetKey 获取 task key
 	GetKey() string
 	// SetResult 设置 task 结果
-	SetResult(result interface{}, err error)
+	SetResult(result any, err error)
 	// GetResult 获取 task 结果
-	GetResult() (interface{}, error)
+	GetResult() (any, error)
 	// Done 返回一个完成标记的 chan
 	Done() <-chan collections.Empty
 }
@@ -30,7 +30,7 @@ type Task struct {
 	key string
 	f   Do
 
-	result interface{}
+	result any
 	err    error
 	done   chan collections.Empty
 	once   sync.Once
@@ -57,7 +57,7 @@ func (task *Task) GetKey() string {
 	return task.key
 }
 
-func (task *Task) GetResult() (interface{}, error) {
+func (task *Task) GetResult() (any, error) {
 	return task.result, task.err
 }
 
@@ -65,7 +65,7 @@ func (task *Task) Done() <-chan collections.Empty {
 	return task.done
 }
 
-func (task *Task) SetResult(result interface{}, err error) {
+func (task *Task) SetResult(result any, err error) {
 	task.once.Do(func() {
 		if err != nil {
 			task.err = err

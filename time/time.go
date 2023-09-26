@@ -99,8 +99,8 @@ func TimestampToDatetime(timestamp int64, layout string) (datetime string, err e
 	if layout == "" {
 		layout = LayoutTime
 	}
-	time := time.Unix(timestamp, 0)
-	return time.Format(layout), nil
+	t := time.Unix(timestamp, 0)
+	return t.Format(layout), nil
 }
 
 var defaultParseTimeLayouts = []string{

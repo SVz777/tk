@@ -6,7 +6,7 @@ import (
 )
 
 // GetValueWithFieldPath  根据path列表从 data 结构体中获取数据 data为*struct or struct
-func GetValueWithFieldPath(data interface{}, path ...string) (interface{}, error) {
+func GetValueWithFieldPath(data any, path ...string) (any, error) {
 	if len(path) <= 0 {
 		return nil, fmt.Errorf("path <= 0")
 	}
@@ -32,7 +32,7 @@ func GetValueWithFieldPath(data interface{}, path ...string) (interface{}, error
 }
 
 // SetValueWithFieldPath 根据path列表从 设置 data 结构体中对应数据 data必须为*struct
-func SetValueWithFieldPath(data interface{}, value interface{}, path ...string) error {
+func SetValueWithFieldPath(data any, value any, path ...string) error {
 	if len(path) <= 0 {
 		return fmt.Errorf("path <= 0")
 	}
