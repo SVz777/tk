@@ -9,38 +9,38 @@ import (
 func TestNewJSONPath(t *testing.T) {
 	type AInt int
 	type JS struct {
-		AInt               AInt                     `json_path:"a_int"`
-		Int                int                      `json_path:"int"`
-		IntPtr             *int                     `json_path:"int"`
-		IntInterface       interface{}              `json_path:"int"`
-		Uint               uint                     `json_path:"uint"`
-		Float              float64                  `json_path:"float"`
-		String             string                   `json_path:"string"`
-		StringPtr          *string                  `json_path:"string"`
-		StringInterface    interface{}              `json_path:"string"`
-		Bool               bool                     `json_path:"bool"`
-		IntLevel2          int                      `json_path:"level2.int"`
-		UintLevel2         uint                     `json_path:"level2.uint"`
-		FloatLevel2        float64                  `json_path:"level2.float"`
-		StringLevel2       string                   `json_path:"level2.string"`
-		BoolLevel2         bool                     `json_path:"level2.bool"`
-		Map                map[string]interface{}   `json_path:"map"`
-		StringMap          map[string]string        `json_path:"string_map"`
-		IntMap             map[string]int           `json_path:"int_map"`
-		MapInterface       interface{}              `json_path:"map"`
-		Array              []interface{}            `json_path:"array"`
-		MapArray           []map[string]interface{} `json_path:"map_array"`
-		MapIntArray        []map[string]int         `json_path:"map_int_array"`
-		ArrayInterface     interface{}              `json_path:"array"`
-		Array2             [][]interface{}          `json_path:"array2"`
-		Array2Interface    interface{}              `json_path:"array2"`
-		Array2int          [][]int                  `json_path:"array2"`
-		Array2intInterface interface{}              `json_path:"array2"`
-		Array3             [][][]interface{}        `json_path:"array3"`
-		Array3Interface    interface{}              `json_path:"array3"`
-		Array3int          [][][]int                `json_path:"array3"`
-		Array3intInterface interface{}              `json_path:"array3"`
-		StringArray        []string                 `json_path:"string_array"`
+		AInt               AInt              `json_path:"a_int"`
+		Int                int               `json_path:"int"`
+		IntPtr             *int              `json_path:"int"`
+		IntInterface       any               `json_path:"int"`
+		Uint               uint              `json_path:"uint"`
+		Float              float64           `json_path:"float"`
+		String             string            `json_path:"string"`
+		StringPtr          *string           `json_path:"string"`
+		StringInterface    any               `json_path:"string"`
+		Bool               bool              `json_path:"bool"`
+		IntLevel2          int               `json_path:"level2.int"`
+		UintLevel2         uint              `json_path:"level2.uint"`
+		FloatLevel2        float64           `json_path:"level2.float"`
+		StringLevel2       string            `json_path:"level2.string"`
+		BoolLevel2         bool              `json_path:"level2.bool"`
+		Map                map[string]any    `json_path:"map"`
+		StringMap          map[string]string `json_path:"string_map"`
+		IntMap             map[string]int    `json_path:"int_map"`
+		MapInterface       any               `json_path:"map"`
+		Array              []any             `json_path:"array"`
+		MapArray           []map[string]any  `json_path:"map_array"`
+		MapIntArray        []map[string]int  `json_path:"map_int_array"`
+		ArrayInterface     any               `json_path:"array"`
+		Array2             [][]any           `json_path:"array2"`
+		Array2Interface    any               `json_path:"array2"`
+		Array2int          [][]int           `json_path:"array2"`
+		Array2intInterface any               `json_path:"array2"`
+		Array3             [][][]any         `json_path:"array3"`
+		Array3Interface    any               `json_path:"array3"`
+		Array3int          [][][]int         `json_path:"array3"`
+		Array3intInterface any               `json_path:"array3"`
+		StringArray        []string          `json_path:"string_array"`
 		Struct             struct {
 			A int
 			B string
@@ -256,13 +256,13 @@ func TestNewJSONPath(t *testing.T) {
 	assert.Equal(t, 2.22, js.FloatLevel2)
 	assert.Equal(t, "jsonpath2", js.StringLevel2)
 	assert.Equal(t, false, js.BoolLevel2)
-	assert.Equal(t, map[string]interface{}{"a": Number("1"), "b": "2", "c": Number("3")}, js.Map)
+	assert.Equal(t, map[string]any{"a": Number("1"), "b": "2", "c": Number("3")}, js.Map)
 	assert.Equal(t, map[string]string{"a": "1", "b": "2", "c": "3"}, js.StringMap)
 	assert.Equal(t, map[string]int{"a": 1, "b": 2, "c": 3}, js.IntMap)
-	assert.Equal(t, map[string]interface{}{"a": Number("1"), "b": "2", "c": Number("3")}, js.MapInterface)
-	assert.Equal(t, []interface{}{Number("1"), "2", Number("3")}, js.Array)
+	assert.Equal(t, map[string]any{"a": Number("1"), "b": "2", "c": Number("3")}, js.MapInterface)
+	assert.Equal(t, []any{Number("1"), "2", Number("3")}, js.Array)
 	assert.Equal(
-		t, []map[string]interface{}{
+		t, []map[string]any{
 			{"map11": Number("1")},
 			{"map21": Number("1"), "map22": "2"},
 		}, js.MapArray,
@@ -273,51 +273,51 @@ func TestNewJSONPath(t *testing.T) {
 			{"map21": 1, "map22": 2},
 		}, js.MapIntArray,
 	)
-	assert.Equal(t, []interface{}{Number("1"), "2", Number("3")}, js.ArrayInterface)
+	assert.Equal(t, []any{Number("1"), "2", Number("3")}, js.ArrayInterface)
 	assert.Equal(
 		t,
-		[][]interface{}{{Number("1"), Number("2")}, {Number("2"), Number("3")}, {Number("3"), Number("4")}},
+		[][]any{{Number("1"), Number("2")}, {Number("2"), Number("3")}, {Number("3"), Number("4")}},
 		js.Array2,
 	)
 	assert.Equal(
 		t,
-		[]interface{}{
-			[]interface{}{Number("1"), Number("2")},
-			[]interface{}{Number("2"), Number("3")},
-			[]interface{}{Number("3"), Number("4")},
+		[]any{
+			[]any{Number("1"), Number("2")},
+			[]any{Number("2"), Number("3")},
+			[]any{Number("3"), Number("4")},
 		},
 		js.Array2Interface,
 	)
 	assert.Equal(t, [][]int{{1, 2}, {2, 3}, {3, 4}}, js.Array2int)
 	assert.Equal(
 		t,
-		[]interface{}{
-			[]interface{}{Number("1"), Number("2")},
-			[]interface{}{Number("2"), Number("3")},
-			[]interface{}{Number("3"), Number("4")},
+		[]any{
+			[]any{Number("1"), Number("2")},
+			[]any{Number("2"), Number("3")},
+			[]any{Number("3"), Number("4")},
 		},
 		js.Array2intInterface,
 	)
 	assert.Equal(
 		t,
-		[][][]interface{}{{{Number("1"), Number("2")}}, {{Number("2"), Number("3")}}, {{Number("3"), Number("4")}}},
+		[][][]any{{{Number("1"), Number("2")}}, {{Number("2"), Number("3")}}, {{Number("3"), Number("4")}}},
 		js.Array3,
 	)
 	assert.Equal(
 		t,
-		[]interface{}{
-			[]interface{}{[]interface{}{Number("1"), Number("2")}},
-			[]interface{}{[]interface{}{Number("2"), Number("3")}},
-			[]interface{}{[]interface{}{Number("3"), Number("4")}},
+		[]any{
+			[]any{[]any{Number("1"), Number("2")}},
+			[]any{[]any{Number("2"), Number("3")}},
+			[]any{[]any{Number("3"), Number("4")}},
 		},
 		js.Array3Interface,
 	)
 	assert.Equal(t, [][][]int{{{1, 2}}, {{2, 3}}, {{3, 4}}}, js.Array3int)
 	assert.Equal(
-		t, []interface{}{
-			[]interface{}{[]interface{}{Number("1"), Number("2")}},
-			[]interface{}{[]interface{}{Number("2"), Number("3")}},
-			[]interface{}{[]interface{}{Number("3"), Number("4")}},
+		t, []any{
+			[]any{[]any{Number("1"), Number("2")}},
+			[]any{[]any{Number("2"), Number("3")}},
+			[]any{[]any{Number("3"), Number("4")}},
 		},
 		js.Array3intInterface,
 	)
@@ -387,17 +387,17 @@ func TestNewJSONPath(t *testing.T) {
 }
 
 func TestNewJSONPathWithData(t *testing.T) {
-	jp := NewJSONPathWithData(map[string]interface{}{
+	jp := NewJSONPathWithData(map[string]any{
 		"i": 1,
-		"m": map[string]interface{}{
+		"m": map[string]any{
 			"1": 1,
 			"2": "m2",
 		},
 		"s":  []int{1, 2, 3},
-		"si": []interface{}{1, "2", 3},
+		"si": []any{1, "2", 3},
 	}, WithReflectSwitch(true))
 	assert.Equal(t, 1, jp.Get("i").Interface())
-	assert.Equal(t, map[string]interface{}{
+	assert.Equal(t, map[string]any{
 		"1": 1,
 		"2": "m2",
 	}, jp.Get("m").Interface())
@@ -406,7 +406,7 @@ func TestNewJSONPathWithData(t *testing.T) {
 	assert.Equal(t, "m2", jp.Get("m").Get("2").Interface())
 	assert.Equal(t, []int{1, 2, 3}, jp.GetPath("s").Interface())
 	assert.Equal(t, 2, jp.GetPath("s", "1").Interface())
-	assert.Equal(t, []interface{}{1, "2", 3}, jp.Get("si").Interface())
+	assert.Equal(t, []any{1, "2", 3}, jp.Get("si").Interface())
 	assert.Equal(t, "2", jp.GetPath("si", "1").Interface())
 }
 
@@ -424,48 +424,48 @@ func TestNewJSONPathSet(t *testing.T) {
 	assert.Equal(t, Number("1"), jp.Get("i").Interface())
 	jp.Set("i", 2)
 	assert.Equal(t, 2, jp.Get("i").Interface())
-	jp.SetPath([]interface{}{"i"}, 3)
+	jp.SetPath([]any{"i"}, 3)
 	assert.Equal(t, 3, jp.Get("i").Interface())
 	assert.Equal(t, Number("2"), jp.GetPath("s", "1").Interface())
-	jp.SetPath([]interface{}{"s", "1"}, 4)
+	jp.SetPath([]any{"s", "1"}, 4)
 	assert.Equal(t, 4, jp.GetPath("s", "1").Interface())
 	assert.Equal(t, "2", jp.GetPath("si", "1").Interface())
-	jp.SetPath([]interface{}{"si", "1"}, 4)
+	jp.SetPath([]any{"si", "1"}, 4)
 	assert.Equal(t, 4, jp.GetPath("si", "1").Interface())
 }
 
 func TestNewJSONPathSetFuzz(t *testing.T) {
-	jp := NewJSONPathWithData(map[string]interface{}{
+	jp := NewJSONPathWithData(map[string]any{
 		"i": 1,
-		"m": map[string]interface{}{
+		"m": map[string]any{
 			"1": 1,
 			"2": "m2",
 		},
 		"s":  []int{1, 2, 3},
-		"si": []interface{}{1, "2", 3},
+		"si": []any{1, "2", 3},
 	}, WithReflectSwitch(true))
 	assert.Equal(t, 1, jp.Get("i").Interface())
 	jp.Set("i", 2)
 	assert.Equal(t, 2, jp.Get("i").Interface())
-	jp.SetPath([]interface{}{"i"}, 3)
+	jp.SetPath([]any{"i"}, 3)
 	assert.Equal(t, 3, jp.Get("i").Interface())
 	assert.Equal(t, 2, jp.GetPath("s", "1").Interface())
-	jp.SetPath([]interface{}{"s", "1"}, 4)
+	jp.SetPath([]any{"s", "1"}, 4)
 	assert.Equal(t, 4, jp.GetPath("s", "1").Interface())
 	assert.Equal(t, "2", jp.GetPath("si", "1").Interface())
-	jp.SetPath([]interface{}{"si", "1"}, 4)
+	jp.SetPath([]any{"si", "1"}, 4)
 	assert.Equal(t, 4, jp.GetPath("si", "1").Interface())
 }
 
 func BenchmarkJSONPath_getComma(b *testing.B) {
-	jp := NewJSONPathWithData(map[string]interface{}{
+	jp := NewJSONPathWithData(map[string]any{
 		"i": 1,
-		"m": map[string]interface{}{
+		"m": map[string]any{
 			"m1": 1,
 			"m2": "m2",
 		},
 		"s":  []int{1, 2, 3},
-		"si": []interface{}{1, "2", 3},
+		"si": []any{1, "2", 3},
 	})
 	for i := 0; i < b.N; i++ {
 		jp.GetPath("si", "1")
@@ -473,14 +473,14 @@ func BenchmarkJSONPath_getComma(b *testing.B) {
 }
 
 func BenchmarkJSONPath_getReflect(b *testing.B) {
-	jp := NewJSONPathWithData(map[string]interface{}{
+	jp := NewJSONPathWithData(map[string]any{
 		"i": 1,
-		"m": map[string]interface{}{
+		"m": map[string]any{
 			"m1": 1,
 			"m2": "m2",
 		},
 		"s":  []int{1, 2, 3},
-		"si": []interface{}{1, "2", 3},
+		"si": []any{1, "2", 3},
 	}, WithReflectSwitch(true))
 	for i := 0; i < b.N; i++ {
 		jp.GetPath("si", "1")
@@ -488,31 +488,31 @@ func BenchmarkJSONPath_getReflect(b *testing.B) {
 }
 
 func BenchmarkJSONPath_setComma(b *testing.B) {
-	jp := NewJSONPathWithData(map[string]interface{}{
+	jp := NewJSONPathWithData(map[string]any{
 		"i": 1,
-		"m": map[string]interface{}{
+		"m": map[string]any{
 			"m1": 1,
 			"m2": "m2",
 		},
 		"s":  []int{1, 2, 3},
-		"si": []interface{}{1, "2", 3},
+		"si": []any{1, "2", 3},
 	})
 	for i := 0; i < b.N; i++ {
-		jp.SetPath([]interface{}{"si"}, 1)
+		jp.SetPath([]any{"si"}, 1)
 	}
 }
 
 func BenchmarkJSONPath_setReflect(b *testing.B) {
-	jp := NewJSONPathWithData(map[string]interface{}{
+	jp := NewJSONPathWithData(map[string]any{
 		"i": 1,
-		"m": map[string]interface{}{
+		"m": map[string]any{
 			"m1": 1,
 			"m2": "m2",
 		},
 		"s":  []int{1, 2, 3},
-		"si": []interface{}{1, "2", 3},
+		"si": []any{1, "2", 3},
 	}, WithReflectSwitch(true))
 	for i := 0; i < b.N; i++ {
-		jp.SetPath([]interface{}{"si"}, 1)
+		jp.SetPath([]any{"si"}, 1)
 	}
 }

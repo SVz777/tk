@@ -12,7 +12,7 @@ import (
 // Path json path的封装
 type Path struct {
 	opts *Options
-	data interface{}
+	data any
 }
 
 // NewJSONPath ...
@@ -29,7 +29,7 @@ func NewJSONPath(jsonData []byte, opt ...Option) (*Path, error) {
 }
 
 // NewJSONPathWithData ...
-func NewJSONPathWithData(data interface{}, opt ...Option) *Path {
+func NewJSONPathWithData(data any, opt ...Option) *Path {
 	return &Path{
 		opts: GetOptions(opt...),
 		data: data,
@@ -52,7 +52,7 @@ func (j *Path) IsNil() bool {
 }
 
 // genNew 生成一份新的只修改 data
-func (j *Path) genNew(data interface{}) *Path {
+func (j *Path) genNew(data any) *Path {
 	return &Path{
 		opts: j.opts,
 		data: data,
@@ -60,13 +60,13 @@ func (j *Path) genNew(data interface{}) *Path {
 }
 
 // Get 获取key 对应值，不存在 IsNil 为 true
-func (j *Path) Get(key interface{}) *Path {
+func (j *Path) Get(key any) *Path {
 	v, _ := j.Get2(key)
 	return v
 }
 
 // Get2 获取key 对应值，取到了第二个值为true
-func (j *Path) Get2(key interface{}) (*Path, bool) {
+func (j *Path) Get2(key any) (*Path, bool) {
 	if j.opts.ReflectSwitch {
 		return j.get2Reflect(key)
 	} else {
@@ -74,9 +74,9 @@ func (j *Path) Get2(key interface{}) (*Path, bool) {
 	}
 }
 
-func (j *Path) get2Comma(key interface{}) (*Path, bool) {
+func (j *Path) get2Comma(key any) (*Path, bool) {
 	switch data := j.data.(type) {
-	case map[string]interface{}:
+	case map[string]any:
 		k, ok := key.(string)
 		if !ok {
 			return j.genNew(nil), false
@@ -86,7 +86,7 @@ func (j *Path) get2Comma(key interface{}) (*Path, bool) {
 			return j.genNew(nil), false
 		}
 		return j.genNew(v), true
-	case []interface{}:
+	case []any:
 		k, err := convert.Int(key)
 		if err != nil {
 			return j.genNew(nil), false
@@ -100,7 +100,7 @@ func (j *Path) get2Comma(key interface{}) (*Path, bool) {
 	}
 }
 
-func (j *Path) get2Reflect(key interface{}) (*Path, bool) {
+func (j *Path) get2Reflect(key any) (*Path, bool) {
 	rv := reflect.ValueOf(j.data)
 	switch rv.Kind() {
 	case reflect.Map:
@@ -129,7 +129,7 @@ func (j *Path) get2Reflect(key interface{}) (*Path, bool) {
 }
 
 // GetPath 根据path 获取
-func (j *Path) GetPath(path ...string) *Path {
+func (j *Path) GetPath(path ...any) *Path {
 	t := j
 	for _, p := range path {
 		t = t.Get(p)
@@ -138,7 +138,7 @@ func (j *Path) GetPath(path ...string) *Path {
 }
 
 // Set 设置值
-func (j *Path) Set(key interface{}, value interface{}) bool {
+func (j *Path) Set(key any, value any) bool {
 	if j.opts.ReflectSwitch {
 		return j.setReflect(key, value)
 	} else {
@@ -146,16 +146,16 @@ func (j *Path) Set(key interface{}, value interface{}) bool {
 	}
 }
 
-func (j *Path) setComma(key interface{}, value interface{}) bool {
+func (j *Path) setComma(key any, value any) bool {
 	switch data := j.data.(type) {
-	case map[string]interface{}:
+	case map[string]any:
 		k, ok := key.(string)
 		if !ok {
 			return false
 		}
 		data[k] = value
 		return true
-	case []interface{}:
+	case []any:
 		k, err := convert.Int(key)
 		if err != nil {
 			return false
@@ -170,7 +170,7 @@ func (j *Path) setComma(key interface{}, value interface{}) bool {
 	}
 }
 
-func (j *Path) setReflect(key interface{}, value interface{}) bool {
+func (j *Path) setReflect(key any, value any) bool {
 	rv := reflect.ValueOf(j.data)
 	rt := rv.Type()
 	switch rv.Kind() {
@@ -205,7 +205,7 @@ func (j *Path) setReflect(key interface{}, value interface{}) bool {
 }
 
 // SetPath 根据path设置值
-func (j *Path) SetPath(path []interface{}, value interface{}) bool {
+func (j *Path) SetPath(path []any, value any) bool {
 	if len(path) <= 0 {
 		return false
 	}
@@ -217,7 +217,7 @@ func (j *Path) SetPath(path []interface{}, value interface{}) bool {
 }
 
 // Interface 获取data值
-func (j *Path) Interface() interface{} {
+func (j *Path) Interface() any {
 	return j.data
 }
 
@@ -226,9 +226,35 @@ func (j *Path) Int() (int, error) {
 	return convert.Int(j.data)
 }
 
+// MustInt 将值转为 int 没有就返回0 或者 dft第一个值
+func (j *Path) MustInt(dft ...int) int {
+	if v, err := convert.Int(j.data); err == nil {
+		return v
+	}
+
+	if len(dft) >= 1 {
+		return dft[0]
+	}
+
+	return 0
+}
+
 // Int32 将值转为 int32
 func (j *Path) Int32() (int32, error) {
 	return convert.Int32(j.data)
+}
+
+// MustInt32 将值转为 int32 没有就返回0 或者 dft第一个值
+func (j *Path) MustInt32(dft ...int32) int32 {
+	if v, err := convert.Int32(j.data); err == nil {
+		return v
+	}
+
+	if len(dft) >= 1 {
+		return dft[0]
+	}
+
+	return 0
 }
 
 // Int64 将值转为 int64
@@ -236,9 +262,35 @@ func (j *Path) Int64() (int64, error) {
 	return convert.Int64(j.data)
 }
 
+// MustInt64 将值转为 int64 没有就返回0 或者 dft第一个值
+func (j *Path) MustInt64(dft ...int64) int64 {
+	if v, err := convert.Int64(j.data); err == nil {
+		return v
+	}
+
+	if len(dft) >= 1 {
+		return dft[0]
+	}
+
+	return 0
+}
+
 // Uint 将值转为 uint
 func (j *Path) Uint() (uint, error) {
 	return convert.Uint(j.data)
+}
+
+// MustUInt 将值转为 uint 没有就返回0 或者 dft第一个值
+func (j *Path) MustUInt(dft ...uint) uint {
+	if v, err := convert.Uint(j.data); err == nil {
+		return v
+	}
+
+	if len(dft) >= 1 {
+		return dft[0]
+	}
+
+	return 0
 }
 
 // UInt64 将值转为 Uint64
@@ -246,9 +298,35 @@ func (j *Path) UInt64() (uint64, error) {
 	return convert.Uint64(j.data)
 }
 
+// MustUInt64 将值转为 uint64 没有就返回0 或者 dft第一个值
+func (j *Path) MustUInt64(dft ...uint64) uint64 {
+	if v, err := convert.Uint64(j.data); err == nil {
+		return v
+	}
+
+	if len(dft) >= 1 {
+		return dft[0]
+	}
+
+	return 0
+}
+
 // String 将值转为 string
 func (j *Path) String() (string, error) {
 	return convert.String(j.data)
+}
+
+// MustString 将值转为 string 没有就返回 "" 或者 dft第一个值
+func (j *Path) MustString(dft ...string) string {
+	if v, err := convert.String(j.data); err == nil {
+		return v
+	}
+
+	if len(dft) >= 1 {
+		return dft[0]
+	}
+
+	return ""
 }
 
 // Float64 将值转为 float64
@@ -256,30 +334,82 @@ func (j *Path) Float64() (float64, error) {
 	return convert.Float64(j.data)
 }
 
+// MustFloat64 将值转为 float64 没有就返回0 或者 dft第一个值
+func (j *Path) MustFloat64(dft ...float64) float64 {
+	if v, err := convert.Float64(j.data); err == nil {
+		return v
+	}
+
+	if len(dft) >= 1 {
+		return dft[0]
+	}
+
+	return 0.0
+}
+
 // Bool 将值转为 bool
 func (j *Path) Bool() (bool, error) {
 	return convert.Bool(j.data)
 }
 
-// Map 将值断言为 map[string]interface
-func (j *Path) Map() (map[string]interface{}, error) {
-	if m, ok := (j.data).(map[string]interface{}); ok {
-		return m, nil
+// MustBool 将值转为 bool 没有就返回 false 或者 dft第一个值
+func (j *Path) MustBool(dft ...bool) bool {
+	if v, err := convert.Bool(j.data); err == nil {
+		return v
 	}
-	return nil, fmt.Errorf("type assertion to map[string]interface{} failed")
+
+	if len(dft) >= 1 {
+		return dft[0]
+	}
+
+	return false
 }
 
-// Array 将值断言为 []interface
-func (j *Path) Array() ([]interface{}, error) {
-	if a, ok := (j.data).([]interface{}); ok {
+// Map 将值断言为 map[string]interface
+func (j *Path) Map() (map[string]any, error) {
+	if m, ok := (j.data).(map[string]any); ok {
+		return m, nil
+	}
+	return nil, fmt.Errorf("type assertion to map[string]any failed")
+}
+
+// MustMap 将值转为 map[string]any 没有就返回 nil 或者 dft第一个值
+func (j *Path) MustMap(dft ...map[string]any) map[string]any {
+	if m, ok := (j.data).(map[string]any); ok {
+		return m
+	}
+
+	if len(dft) >= 1 {
+		return dft[0]
+	}
+
+	return nil
+}
+
+// Slice 将值断言为 []any
+func (j *Path) Slice() ([]any, error) {
+	if a, ok := (j.data).([]any); ok {
 		return a, nil
 	}
-	return nil, fmt.Errorf("type assertion to []interface{} failed")
+	return nil, fmt.Errorf("type assertion to []any failed")
+}
+
+// MustSlice 将值转为 []any 没有就返回 nil 或者 dft第一个值
+func (j *Path) MustSlice(dft ...[]any) []any {
+	if m, ok := (j.data).([]any); ok {
+		return m
+	}
+
+	if len(dft) >= 1 {
+		return dft[0]
+	}
+
+	return nil
 }
 
 // StringArray 将值转为 []string
 func (j *Path) StringArray() ([]string, error) {
-	a, err := j.Array()
+	a, err := j.Slice()
 	if err != nil {
 		return nil, err
 	}
@@ -295,7 +425,7 @@ func (j *Path) StringArray() ([]string, error) {
 }
 
 // ParseWithJSONPath 根据data的tag(json_path)定义来填充data
-func (j *Path) ParseWithJSONPath(data interface{}) error {
+func (j *Path) ParseWithJSONPath(data any) error {
 	vr := reflect.ValueOf(data)
 	if vr.Kind() != reflect.Ptr {
 		// data必须是指针
@@ -336,7 +466,11 @@ func (j *Path) parseWithJSONPath(v reflect.Value) error {
 		}
 		tagName := strings.Split(tagSrc, ",")[0]
 		tagPath := strings.Split(tagName, ".")
-		jsonValue := j.GetPath(tagPath...)
+		tmp := make([]any, len(tagPath))
+		for idx, t := range tagPath {
+			tmp[idx] = t
+		}
+		jsonValue := j.GetPath(tmp...)
 		if jsonValue.IsNil() {
 			continue
 		}
@@ -415,7 +549,7 @@ func (j *Path) parseValue(fieldName string, tf reflect.Type, jsonValue *Path) (r
 	case reflect.Slice:
 		itemKind := tf.Elem().Kind()
 		if itemKind == reflect.Interface {
-			aValue, err := jsonValue.Array()
+			aValue, err := jsonValue.Slice()
 			if err != nil {
 				return reflect.Value{}, fmt.Errorf("%s parse slice err: %w", fieldName, err)
 			}
@@ -427,7 +561,7 @@ func (j *Path) parseValue(fieldName string, tf reflect.Type, jsonValue *Path) (r
 			}
 			return reflect.ValueOf(aValue), nil
 		} else {
-			aValue, err := jsonValue.Array()
+			aValue, err := jsonValue.Slice()
 			if err != nil {
 				return reflect.Value{}, fmt.Errorf("%s parse slice err: %w", fieldName, err)
 			}
