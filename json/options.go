@@ -1,10 +1,10 @@
 package json
 
 type Options struct {
-	ReflectSwitch          bool
-	Tag                    string
-	IgnoreSingleFieldError bool
-	Convert                bool
+	ReflectSwitch bool
+	Tag           string
+	Convert       bool
+	ErrorHandler  func(key string, err error) bool
 }
 
 func (opts *Options) Update(opt ...Option) {
@@ -19,6 +19,7 @@ func GetOptions(opt ...Option) *Options {
 	opts := &Options{
 		ReflectSwitch: false,
 		Tag:           "json_path",
+		Convert:       false,
 	}
 	opts.Update(opt...)
 	return opts
@@ -36,9 +37,9 @@ func WithTag(tag string) Option {
 	}
 }
 
-func WithIgnoreSingleFieldError(flag bool) Option {
+func WithErrorHandler(f func(string, error) bool) Option {
 	return func(opts *Options) {
-		opts.IgnoreSingleFieldError = flag
+		opts.ErrorHandler = f
 	}
 }
 

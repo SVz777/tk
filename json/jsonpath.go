@@ -453,16 +453,23 @@ func (j *Path) parseWithJSONPath(v reflect.Value) error {
 		tagSrc := tf.Tag.Get(j.opts.Tag)
 		if tagSrc == "" {
 			if tf.Type.Kind() == reflect.Struct ||
-				(vf.Kind() == reflect.Ptr && vf.Type().Elem().Kind() == reflect.Struct) {
+					(vf.Kind() == reflect.Ptr && vf.Type().Elem().Kind() == reflect.Struct) {
 				err := j.parseWithJSONPath(vf)
 				if err != nil {
+					if j.opts.ErrorHandler != nil && j.opts.ErrorHandler(tf.Name, err) {
+						continue
+					}
 					return fmt.Errorf("sub struct %s parse err: %w", tf.Name, err)
 				}
 			}
 			continue
 		}
 		if !vf.CanSet() {
-			return fmt.Errorf("%s can't set", tf.Name)
+			err := fmt.Errorf("%s can't set", tf.Name)
+			if j.opts.ErrorHandler != nil && j.opts.ErrorHandler(tf.Name, err) {
+				continue
+			}
+			return err
 		}
 		tagName := strings.Split(tagSrc, ",")[0]
 		tagPath := strings.Split(tagName, ".")
@@ -476,7 +483,7 @@ func (j *Path) parseWithJSONPath(v reflect.Value) error {
 		}
 		value, err := j.parseValue(tf.Name, vf.Type(), jsonValue)
 		if err != nil {
-			if j.opts.IgnoreSingleFieldError {
+			if j.opts.ErrorHandler != nil && j.opts.ErrorHandler(tf.Name, err) {
 				continue
 			}
 			return fmt.Errorf("getvalue error: %w", err)
@@ -494,7 +501,11 @@ func (j *Path) parseWithJSONPath(v reflect.Value) error {
 			continue
 		}
 
-		return fmt.Errorf("%s can't %s:%v set", tf.Name, value.String(), value)
+		err = fmt.Errorf("%s can't %s:%v set", tf.Name, value.String(), value)
+		if j.opts.ErrorHandler != nil && j.opts.ErrorHandler(tf.Name, err) {
+			continue
+		}
+		return err
 	}
 	return nil
 }
