@@ -33,13 +33,21 @@ func Inter[T comparable](arrs ...[]T) []T {
 	return values.AllItems()
 }
 
-func InArray[T comparable](v T, arr []T) bool {
+func InSlice[T comparable](v T, arr []T) bool {
 	for _, vv := range arr {
 		if vv == v {
 			return true
 		}
 	}
 	return false
+}
+
+func ToAnySlice[T comparable](arr []T) []any {
+	ret := make([]any, len(arr))
+	for idx, item := range arr {
+		ret[idx] = item
+	}
+	return ret
 }
 
 func Map[T, R any](arr []T, f func(int, T) R) []R {
