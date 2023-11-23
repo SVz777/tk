@@ -20,7 +20,7 @@ func (c Counter[T]) AddOne(key T) {
 
 func (c Counter[T]) Add(key T, v uint64) {
 	if _, ok := c[key]; ok {
-		c[key]++
+		c[key] += v
 	} else {
 		c[key] = v
 	}
