@@ -1,10 +1,13 @@
 package json
 
 import (
+	"encoding/json"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
+
+type Number = json.Number
 
 func TestNewJSONPath(t *testing.T) {
 	type AInt int

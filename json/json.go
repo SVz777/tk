@@ -1,21 +1,19 @@
 package json
 
 import (
-	"bytes"
-	bjson "encoding/json"
+	"github.com/bytedance/sonic"
 )
 
-type Number = bjson.Number
+var DefaultConfig = sonic.Config{
+	UseNumber: true,
+}.Froze()
 
 // Marshal ...
 func Marshal(v any) ([]byte, error) {
-	return bjson.Marshal(v)
+	return DefaultConfig.Marshal(v)
 }
 
 // Unmarshal 处理json float64精度丢失
 func Unmarshal(data []byte, v any) error {
-	decoder := bjson.NewDecoder(bytes.NewReader(data))
-	decoder.UseNumber()
-	err := decoder.Decode(&v)
-	return err
+	return DefaultConfig.Unmarshal(data, v)
 }

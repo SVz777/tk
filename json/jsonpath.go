@@ -1,7 +1,6 @@
 package json
 
 import (
-	"encoding/json"
 	"fmt"
 	"reflect"
 	"strings"
@@ -453,7 +452,7 @@ func (j *Path) parseWithJSONPath(v reflect.Value) error {
 		tagSrc := tf.Tag.Get(j.opts.Tag)
 		if tagSrc == "" {
 			if tf.Type.Kind() == reflect.Struct ||
-					(vf.Kind() == reflect.Ptr && vf.Type().Elem().Kind() == reflect.Struct) {
+				(vf.Kind() == reflect.Ptr && vf.Type().Elem().Kind() == reflect.Struct) {
 				err := j.parseWithJSONPath(vf)
 				if err != nil {
 					if j.opts.ErrorHandler != nil && j.opts.ErrorHandler(tf.Name, err) {
@@ -551,7 +550,7 @@ func (j *Path) parseValue(fieldName string, tf reflect.Type, jsonValue *Path) (r
 	case reflect.Struct:
 		trueValue := reflect.New(tf)
 		b, _ := jsonValue.MarshalJSON()
-		err := json.Unmarshal(b, trueValue.Interface())
+		err := Unmarshal(b, trueValue.Interface())
 		if err != nil {
 			return reflect.Value{}, fmt.Errorf("%s parse struct err: %w", fieldName, err)
 		}
